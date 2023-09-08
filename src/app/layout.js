@@ -4,11 +4,14 @@ import {
   Spline_Sans_Mono,
 } from 'next/font/google';
 import clsx from 'clsx';
+import { cookies } from 'next/dist/client/components/headers';
 
 import { LIGHT_TOKENS, DARK_TOKENS } from '@/constants';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import MotionPreferences from '@/components/MotionPreferences';
+
 import './styles.css';
 
 const mainFont = Work_Sans({
@@ -26,21 +29,24 @@ const monoFont = Spline_Sans_Mono({
 
 function RootLayout({ children }) {
   // TODO: Dynamic theme depending on user preference
-  const theme = 'light';
+  const savedTheme = cookies().get('color-theme');
+  const theme = savedTheme?.value || 'light';
 
   return (
-    <html
-      lang="en"
-      className={clsx(mainFont.variable, monoFont.variable)}
-      data-color-theme={theme}
-      style={theme === 'light' ? LIGHT_TOKENS : DARK_TOKENS}
-    >
-      <body>
-        <Header theme={theme} />
-        <main>{children}</main>
-        <Footer />
-      </body>
-    </html>
+    <MotionPreferences>
+      <html
+        lang="en"
+        className={clsx(mainFont.variable, monoFont.variable)}
+        data-color-theme={theme}
+        style={theme === 'light' ? LIGHT_TOKENS : DARK_TOKENS}
+      >
+        <body>
+          <Header theme={theme} />
+          <main>{children}</main>
+          <Footer />
+        </body>
+      </html>
+    </MotionPreferences>
   );
 }
 
